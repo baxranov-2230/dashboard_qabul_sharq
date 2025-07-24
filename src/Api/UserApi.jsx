@@ -107,15 +107,15 @@ export const CreateApplicationApi = async (studentData) => {
     }
 };
 
-export const GetApplicationApi = async () => {
-    try {
-        const application = await axiosInstance.get(`${API_URL}/api/application`,);
-        return application.data;
-    } catch (error) {
-        if (error.response?.status === 404) {
-            return null;
-        }
-        throw error;
-    }
-};
+// export const GetApplicationApi = async () => {
+//     try {
+//         const application = await axiosInstance.get(`${API_URL}/api/application`,);
+//         return application.data;
+//     } catch (error) {
+//         if (error.response?.status === 404) {
+//             return null;
+//         }
+//         throw error;
+//     }
+// };
 

@@ -24,10 +24,11 @@ import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage.jsx";
 import {useQuery} from "@tanstack/react-query";
 
-import ListApplication from "./pages/ApplicationPages/ListApplication.jsx";
-import Profile from "./pages/Profile.jsx";
-import CreateApplication from "./pages/ApplicationPages/CreateApplication.jsx";
-import {GetApplicationApi} from "./Api/UserApi.jsx";
+
+
+import ListEducationType from "./pages/EducationTypePages/ListEducationType.jsx";
+import ListStudyDirection from "./pages/ListStudyDirection.jsx";
+import ListUserApplication from "./pages/ListUserApplication.jsx";
 
 
 function ProtectedRoute({children}) {
@@ -53,11 +54,11 @@ function App() {
 
     const isPublicPage = !(isLoginPage || isRegisterPage || isVerifySMSPage || isPassportPage || isForgetPassword || isResetPassword);
 
-    const {data: application, isLoading, error} = useQuery({
-        queryKey: ["chek-application"],
-        queryFn: GetApplicationApi,
-    });
-    const isDisabled = !!application || isLoading;
+    // const {data: application, isLoading, error} = useQuery({
+    //     queryKey: ["chek-application"],
+    //     queryFn: GetApplicationApi,
+    // });
+    // const isDisabled = !!application || isLoading;
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -106,20 +107,7 @@ function App() {
                             <HemisLogo className="h-8"/>
                         </div>
                         <div className="flex items-center space-x-6 mr-10">
-                            <div>
-                                <button
-                                    disabled={isDisabled}
-                                    className={` flex items-center space-x-2 px-4 py-2 rounded text-white ${
-                                        isDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#154576] hover:bg-[#0361B9]'
-                                    }`}
-                                >
-                                    {!isDisabled ? (
-                                        <Link to="/create-application">Ariza yuborish</Link>
-                                    ) : (
-                                        <span>Ariza yuborilgan</span>
-                                    )}
-                                </button>
-                            </div>
+
                             <Bell className="h-5 w-5 cursor-pointer"/>
                             <div>
                                 <Button
@@ -185,15 +173,33 @@ function App() {
                         <Route path="/dashboard" element={<Dashboard/>}/>
 
 
-                        {/*<Route*/}
-                        {/*    path="/profile"*/}
+                        <Route
+                            path="/education-type"
 
-                        {/*    element={*/}
-                        {/*        <ProtectedRoute>*/}
-                        {/*            <Profile/>*/}
-                        {/*        </ProtectedRoute>*/}
-                        {/*    }*/}
-                        {/*/>*/}
+                            element={
+                                <ProtectedRoute>
+                                    <ListEducationType/>
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/study-direction"
+
+                            element={
+                                <ProtectedRoute>
+                                    <ListStudyDirection/>
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/list-application"
+
+                            element={
+                                <ProtectedRoute>
+                                    <ListUserApplication/>
+                                </ProtectedRoute>
+                            }
+                        />
                         {/*<Route*/}
                         {/*    path="/list-application"*/}
                         {/*    element={*/}

@@ -46,17 +46,24 @@ function Sidebar({isOpen}) {
             //     items: [{icon: Home, label: "Bosh sahifa", path: "/admin"}],
             // },
             {
-                id: "application",
+                id: "education_type",
                 items: [
-                    {icon: PiListChecksFill , label: "Arizalar", path: "/list-application"},
+                    {icon: PiListChecksFill , label: "Bitirgan ta'lim turi", path: "/education-type"},
                 ],
             },
             {
-                id: "profile",
+                id: "study_direction",
                 items: [
-                    {icon: IoIosPerson , label: "Profil", path: "/profile"},
+                    {icon: PiListChecksFill , label: "Ta'lim yo'nalishlari", path: "/study-direction"},
                 ],
             },
+            {
+                id: "list_application",
+                items: [
+                    {icon: PiListChecksFill , label: "Yuborilgan arizalar", path: "/list-application"},
+                ],
+            },
+
     //         {
     //             id: "no_list",
     //             items: [

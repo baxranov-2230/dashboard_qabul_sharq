@@ -49,7 +49,7 @@ export default function LoginPage() {
 
     useEffect(() => {
         if (isSuccess) {
-            navigate("/profile");
+            navigate("/education-type");
         }
     }, [navigate, isSuccess]);
     const formik = useFormik({
