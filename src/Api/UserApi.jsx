@@ -39,17 +39,17 @@ export const GetStudyTypeApi = async () => {
     }
 };
 
-export const GetStudyFormApi = async () => {
-    try {
-        const study_form = await axiosInstance.get(`${API_URL}/api/application/study_form`,);
-        return study_form.data;
-    } catch (error) {
-        if (error.response?.status === 404) {
-            return null;
-        }
-        throw error;
-    }
-};
+// export const GetStudyFormApi = async () => {
+//     try {
+//         const study_form = await axiosInstance.get(`${API_URL}/api/application/study_form`,);
+//         return study_form.data;
+//     } catch (error) {
+//         if (error.response?.status === 404) {
+//             return null;
+//         }
+//         throw error;
+//     }
+// };
 
 export const GetStudyLanguageApi = async () => {
     try {

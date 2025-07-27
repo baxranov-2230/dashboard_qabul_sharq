@@ -16,6 +16,9 @@ import {LuNotebookText} from "react-icons/lu";
 import {MdOutlinePostAdd} from "react-icons/md";
 import {CgProfile} from "react-icons/cg";
 import {jwtDecode} from "jwt-decode";
+import { BsBuildingX } from "react-icons/bs";
+import { RiGraduationCapFill } from "react-icons/ri";
+import { RiUserReceived2Fill } from "react-icons/ri";
 
 function Sidebar({isOpen}) {
     const location = useLocation();
@@ -48,19 +51,25 @@ function Sidebar({isOpen}) {
             {
                 id: "education_type",
                 items: [
-                    {icon: PiListChecksFill , label: "Bitirgan ta'lim turi", path: "/education-type"},
+                    {icon: BsBuildingX , label: "Bitirgan ta'lim turi", path: "/education-type"},
                 ],
             },
             {
                 id: "study_direction",
                 items: [
-                    {icon: PiListChecksFill , label: "Ta'lim yo'nalishlari", path: "/study-direction"},
+                    {icon: RiGraduationCapFill  , label: "Ta'lim yo'nalishlari", path: "/study-direction"},
                 ],
             },
             {
                 id: "list_application",
                 items: [
-                    {icon: PiListChecksFill , label: "Yuborilgan arizalar", path: "/list-application"},
+                    {icon: RiUserReceived2Fill , label: "Kelgan arizalar", path: "/list-application"},
+                ],
+            },
+            {
+                id: "list_study_form",
+                items: [
+                    {icon: PiListChecksFill , label: "O'qish turi", path: "/list-study-form"},
                 ],
             },
 

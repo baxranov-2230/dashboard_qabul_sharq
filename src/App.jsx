@@ -29,6 +29,7 @@ import {useQuery} from "@tanstack/react-query";
 import ListEducationType from "./pages/EducationTypePages/ListEducationType.jsx";
 import ListStudyDirection from "./pages/ListStudyDirection.jsx";
 import ListUserApplication from "./pages/ListUserApplication.jsx";
+import ListStudyForm from "./pages/ListStudyForm.jsx";
 
 
 function ProtectedRoute({children}) {
@@ -197,6 +198,15 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <ListUserApplication/>
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/list-study-form"
+
+                            element={
+                                <ProtectedRoute>
+                                    <ListStudyForm/>
                                 </ProtectedRoute>
                             }
                         />
