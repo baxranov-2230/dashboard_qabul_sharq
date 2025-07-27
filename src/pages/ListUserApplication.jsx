@@ -3,6 +3,7 @@ import {useQuery, useMutation} from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import {useFormik} from "formik";
 import * as Yup from "yup";
+import {FaDownload, FaRegEdit} from "react-icons/fa";
 import {
     Button,
     Dialog,
@@ -12,16 +13,29 @@ import {
     TextField
 } from '@mui/material';
 
-import {ConfirmApplicationApi, GetListUserApplicationApi} from "../Api/ListUserApplicationApi.jsx";
+import {
+    ConfirmApplicationApi, downloadApplicationThreePdf,
+    downloadApplicationTwoPdf,
+    GetListUserApplicationApi
+} from "../Api/ListUserApplicationApi.jsx";
+import {GetListApprovedApplicationApi} from "../Api/ListApprovedApplicationApi.jsx";
 
 
 function ListApplication() {
     const [open, setOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
+    const [limit, setLimit] = useState(10);
+    const [offset, setOffset] = useState(0);
+
 
     const {data: applications, refetch} = useQuery({
-        queryKey: ["list-application"],
-        queryFn: GetListUserApplicationApi,
+        queryKey: ["list-application", limit, offset],
+        queryFn: () => GetListUserApplicationApi({limit, offset}),
+    });
+
+    const {data: approvedApplications} = useQuery({
+        queryKey: ["approved-application"],
+        queryFn: GetListApprovedApplicationApi,
     });
 
     const confirmMutation = useMutation({
@@ -69,6 +83,18 @@ function ListApplication() {
         setOpen(true);
     };
 
+    const totalCount = 240;
+    const totalPages = Math.ceil(totalCount / limit);
+    const currentPage = Math.floor(offset / limit) + 1;
+
+    const nextPage = () => {
+        if (offset + limit < totalCount) setOffset(prev => prev + limit);
+    };
+
+    const prevPage = () => {
+        if (offset > 0) setOffset(prev => Math.max(prev - limit, 0));
+    };
+
     return (
         <div className="space-y-6">
             <div className="bg-white rounded-lg shadow">
@@ -87,7 +113,7 @@ function ListApplication() {
                         <tbody>
                         {applications?.map((application, index) => (
                             <tr className="border-t" key={application?.id}>
-                                <td className="p-3">{index + 1}</td>
+                                <td className="p-3">{offset + index + 1}</td>
                                 <td className="p-3">{application?.user_id}</td>
                                 <td className="p-3">
                                     {application?.last_name + " " + application?.first_name + " " + application?.third_name}
@@ -96,18 +122,61 @@ function ListApplication() {
                                     {application?.user?.study_info?.study_direction?.name}
                                 </td>
                                 <td className="p-3">
-                                    <button
-                                        onClick={() => handleOpenModal(application?.user_id)}
-                                        className="p-2 bg-green-600 text-white rounded"
-                                    >
-                                        Tasdiqlash
-                                    </button>
+                                    {approvedApplications?.some(
+                                        (approvedApplication) => approvedApplication?.user_id === application?.user_id
+                                    ) ? (
+                                        <div>
+                                            <button
+                                                onClick={() => downloadApplicationTwoPdf(application?.user_id)}
+                                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded mr-2"
+                                            >
+                                                <FaDownload/>
+                                            </button>
+                                            <button
+                                                onClick={() => downloadApplicationThreePdf(application?.user_id)}
+                                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
+                                            >
+                                                <FaDownload/>
+                                            </button>
+                                        </div>
+
+                                    ) : (
+                                        <button
+                                            onClick={() => handleOpenModal(application?.user_id)}
+
+                                            className="p-2 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                        >
+                                            Tasdiqlash
+                                        </button>
+                                    )}
+
                                 </td>
                             </tr>
                         ))}
                         </tbody>
                     </table>
                 </div>
+            </div>
+            <div className="flex justify-between items-center px-20 pb-4">
+                <button
+                    onClick={prevPage}
+                    disabled={offset === 0}
+                    className="bg-gray-200 px-4 py-2 rounded disabled:opacity-50"
+                >
+                    Oldingi
+                </button>
+
+                <span className="text-sm text-gray-600">
+                        Sahifa: {currentPage} / {totalPages || 1}
+                    </span>
+
+                <button
+                    onClick={nextPage}
+                    disabled={offset + limit >= totalCount}
+                    className="bg-gray-200 px-4 py-2 rounded disabled:opacity-50"
+                >
+                    Keyingi
+                </button>
             </div>
 
             {/* Modal for confirmation */}
