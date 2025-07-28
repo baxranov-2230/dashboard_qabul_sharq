@@ -24,17 +24,22 @@ export const ConfirmApplicationApi = async (confirmData) => {
     console.log(confirmData.user_id, confirmData.edu_course_level);
 
     try {
-        const formData = new FormData();
-        formData.append("user_id", confirmData.user_id || "");
-        formData.append("edu_course_level", confirmData.edu_course_level || "");
+        // const formData = new FormData();
+        // formData.append("user_id", confirmData.user_id || "");
+        // formData.append("edu_course_level", confirmData.edu_course_level || "");
         // console.log(formData)
         const response = await axiosInstance.post(
-            `${API_URL}/api/contract`, formData,
-            // {
-            //     headers: {
-            //         "Content-Type": "multipart/form-data", // Fayl yuborish uchun zarur sarlavha
-            //     },
-            // }
+            `${API_URL}/api/contract`,
+            {
+                user_id: confirmData.user_id,
+                edu_course_level: confirmData.edu_course_level,
+
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
         );
 
 

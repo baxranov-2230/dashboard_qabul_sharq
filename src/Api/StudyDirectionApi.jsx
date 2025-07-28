@@ -27,6 +27,7 @@ export const CreateStudyDirectionApi = async (studyDirectionData) => {
                 education_years: studyDirectionData.education_years,
                 contract_sum: studyDirectionData.contract_sum,
                 study_code: studyDirectionData.study_code,
+                study_form_id: studyDirectionData.study_form_id
             },
             {
                 headers: {
@@ -51,8 +52,8 @@ export const DeleteStudyDirectionApi = async (studyDirectionId) => {
     return educationType.data;
 };
 
-export const UpdateStudyDirectionApi = async ({ id, studyDirectionData }) => {
-    console.log(id, name)
+export const UpdateStudyDirectionApi = async ({id, studyDirectionData}) => {
+    console.log(id, studyDirectionData)
     const response = await axiosInstance.put(
         `${API_URL}/api/study_direction/update/${id}`,
         {
@@ -61,6 +62,7 @@ export const UpdateStudyDirectionApi = async ({ id, studyDirectionData }) => {
             education_years: studyDirectionData.education_years,
             contract_sum: studyDirectionData.contract_sum,
             study_code: studyDirectionData.study_code,
+            study_form_id: studyDirectionData.study_form_id
         },
         {
             headers: {

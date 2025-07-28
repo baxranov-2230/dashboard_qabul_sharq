@@ -4,7 +4,7 @@ import {useQuery, useMutation} from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {Button, Dialog, Slide} from "@mui/material";
+import {Button, Dialog, FormControl, InputLabel, Select, Slide} from "@mui/material";
 import {MdCancel, MdDelete} from "react-icons/md";
 import {FaRegEdit} from "react-icons/fa";
 import {
@@ -13,6 +13,8 @@ import {
     GetStudyDirectionApi,
     UpdateStudyDirectionApi
 } from "../Api/StudyDirectionApi.jsx";
+import {GetStudyFormApi} from "../Api/StudyFormApi.jsx";
+import MenuItem from "@mui/material/MenuItem";
 
 const Transition = forwardRef((props, ref) => (
     <Slide direction="left" ref={ref} {...props} />
@@ -22,6 +24,11 @@ function ListStudyDirection() {
     const [open, setOpen] = useState(false);
     const [editStudyDirection, setEditStudyDirection] = useState(null);
     const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+
+    const{data: studyForms, isLoading} = useQuery({
+        queryKey: ["study-forms"],
+        queryFn: GetStudyFormApi,
+    });
 
     const {data: studyDirections, refetch} = useQuery({
         queryKey: ["study-directions"],
@@ -68,6 +75,7 @@ function ListStudyDirection() {
             contract_sum: 0,
             education_years: 0,
             study_code: "",
+            study_form_id: 0,
         },
         validationSchema: Yup.object({
             name: Yup.string().required("Nomi majburiy"),
@@ -83,6 +91,7 @@ function ListStudyDirection() {
                 education_years: values.education_years,
                 study_code: values.study_code,
                 exam_title: values.exam_title,
+                study_form_id: values.study_form_id
             };
             if (editStudyDirection) {
                 updateMutation.mutate({id: editStudyDirection.id, studyDirectionData,});
@@ -102,6 +111,7 @@ function ListStudyDirection() {
                     education_years: item.education_years,
                     contract_sum: item.contract_sum,
                     study_code: item.study_code,
+                    study_form_id: item.study_form_id
                 }
             );
         } else {
@@ -202,6 +212,27 @@ function ListStudyDirection() {
                                 <p className="text-red-500 text-sm mt-1">{formik.errors.study_code}</p>
                             )}
                         </div>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Ta'lim shaklini tanlang</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={formik.values.study_form_id}
+                                label="Study form"
+                                name="study_form_id"
+                                onChange={formik.handleChange}
+                            >
+                                {isLoading ? (
+                                    <MenuItem disabled>Loading...</MenuItem>
+                                ) : (
+                                    studyForms?.map((study_form) => (
+                                        <MenuItem key={study_form?.id} value={study_form?.id}>
+                                            {study_form?.name}
+                                        </MenuItem>
+                                    ))
+                                )}
+                            </Select>
+                        </FormControl>
 
                         <button type="submit"
                                 className="px-5 py-2 bg-[#3697A5] text-white rounded-lg hover:bg-[#2d7f8a]">
@@ -221,6 +252,7 @@ function ListStudyDirection() {
                             <th className="p-3">O'qish muddati</th>
                             <th className="p-3">Yunalish kodi</th>
                             <th className="p-3">Kontrakt summa</th>
+                            <th className="p-3">Ta'lim turi</th>
                             <th className="p-3 text-center">Amallar</th>
                         </tr>
                         </thead>
@@ -232,6 +264,13 @@ function ListStudyDirection() {
                                 <td className="p-3">{type.education_years}</td>
                                 <td className="p-3">{type.study_code}</td>
                                 <td className="p-3">{type.contract_sum}</td>
+                                <td>
+                                    {studyForms?.map((study_form) => {
+                                        if (study_form.id === type.study_form_id) {
+                                            return study_form.name;
+                                        }}
+                                    )}
+                                </td>
                                 <td className="p-3 flex justify-center gap-3">
                                     <button onClick={() => handleOpen(type)}>
                                         <FaRegEdit className="text-2xl text-[#3697A5]"/>

@@ -69,7 +69,7 @@ function Sidebar({isOpen}) {
             {
                 id: "list_study_form",
                 items: [
-                    {icon: PiListChecksFill , label: "O'qish turi", path: "/list-study-form"},
+                    {icon: PiListChecksFill , label: "Ta'lim shakli", path: "/list-study-form"},
                 ],
             },
 

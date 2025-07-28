@@ -33,9 +33,10 @@ function ListApplication() {
         queryFn: () => GetListUserApplicationApi({limit, offset}),
     });
 
-    const {data: approvedApplications} = useQuery({
+    const {data: approvedApplications,  refetch: refetchApprovedApplications} = useQuery({
         queryKey: ["approved-application"],
         queryFn: GetListApprovedApplicationApi,
+
     });
 
     const confirmMutation = useMutation({
@@ -46,6 +47,7 @@ function ListApplication() {
             setOpen(false);
             formik.resetForm();
             refetch();
+            refetchApprovedApplications();
         },
         onError: (error) => {
             console.log("Xatolik:", error.response?.data?.message); // 👈 asl xabar shu yerda bo'ladi
