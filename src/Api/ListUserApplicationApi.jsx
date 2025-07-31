@@ -24,10 +24,6 @@ export const ConfirmApplicationApi = async (confirmData) => {
     console.log(confirmData.user_id, confirmData.edu_course_level);
 
     try {
-        // const formData = new FormData();
-        // formData.append("user_id", confirmData.user_id || "");
-        // formData.append("edu_course_level", confirmData.edu_course_level || "");
-        // console.log(formData)
         const response = await axiosInstance.post(
             `${API_URL}/api/contract`,
             {
@@ -91,5 +87,17 @@ export const downloadApplicationThreePdf = async (userId) => {
     } catch (error) {
         console.error("Faylni yuklab olishda xatolik:", error);
         alert("Faylni yuklab bo‘lmadi.");
+    }
+};
+
+export const GetListApplicationCountApi = async () => {
+    try {
+        const response = await axiosInstance.get(`${API_URL}/api/user_data/users_with_study_info`,);
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 404) {
+            return null;
+        }
+        throw error;
     }
 };

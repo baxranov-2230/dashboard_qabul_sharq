@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useQuery, useMutation} from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import {useFormik} from "formik";
@@ -15,7 +15,7 @@ import {
 
 import {
     ConfirmApplicationApi, downloadApplicationThreePdf,
-    downloadApplicationTwoPdf,
+    downloadApplicationTwoPdf, GetListApplicationCountApi,
     GetListUserApplicationApi
 } from "../Api/ListUserApplicationApi.jsx";
 import {GetListApprovedApplicationApi} from "../Api/ListApprovedApplicationApi.jsx";
@@ -26,17 +26,19 @@ function ListApplication() {
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [limit, setLimit] = useState(10);
     const [offset, setOffset] = useState(0);
-
-
     const {data: applications, refetch} = useQuery({
         queryKey: ["list-application", limit, offset],
         queryFn: () => GetListUserApplicationApi({limit, offset}),
     });
 
-    const {data: approvedApplications,  refetch: refetchApprovedApplications} = useQuery({
+    const {data: countApplications} = useQuery({
+        queryKey: ["count-application"],
+        queryFn: GetListApplicationCountApi,
+    });
+
+    const {data: approvedApplications, refetch: refetchApprovedApplications} = useQuery({
         queryKey: ["approved-application"],
         queryFn: GetListApprovedApplicationApi,
-
     });
 
     const confirmMutation = useMutation({
@@ -45,8 +47,9 @@ function ListApplication() {
         onSuccess: (data) => {
             toast.success(data.message || "Muvaffaqiyatli tasdiqlandi");
             setOpen(false);
-            formik.resetForm();
-            refetch();
+            setSelectedUserId(null);
+            // formik.resetForm();
+            // refetch();
             refetchApprovedApplications();
         },
         onError: (error) => {
@@ -79,13 +82,16 @@ function ListApplication() {
         },
     });
 
+
+
     const handleOpenModal = (userId) => {
         setSelectedUserId(userId);
         formik.setFieldValue("user_id", userId); // avtomatik user_id kiritish
         setOpen(true);
     };
 
-    const totalCount = 240;
+    const totalCount = countApplications?.users_with_study_info;
+    // const totalCount = 240;
     const totalPages = Math.ceil(totalCount / limit);
     const currentPage = Math.floor(offset / limit) + 1;
 
@@ -96,6 +102,7 @@ function ListApplication() {
     const prevPage = () => {
         if (offset > 0) setOffset(prev => Math.max(prev - limit, 0));
     };
+
 
     return (
         <div className="space-y-6">
@@ -109,6 +116,8 @@ function ListApplication() {
                             <th className="p-3 text-gray-600">User ID</th>
                             <th className="p-3 text-gray-600">F.I.O</th>
                             <th className="p-3 text-gray-600">Ta'lim yo'nalishi</th>
+                            <th className="p-3 text-gray-600">Ta'lim shakli</th>
+                            <th className="p-3 text-gray-600">Telefon raqami</th>
                             <th className="p-3 text-gray-600">Amal</th>
                         </tr>
                         </thead>
@@ -124,9 +133,17 @@ function ListApplication() {
                                     {application?.user?.study_info?.study_direction?.name}
                                 </td>
                                 <td className="p-3">
-                                    {approvedApplications?.some(
-                                        (approvedApplication) => approvedApplication?.user_id === application?.user_id
-                                    ) ? (
+                                    {application?.user?.study_info?.study_form?.name}
+                                </td>
+                                <td className="p-3">
+                                    {application?.user?.phone_number}
+                                </td>
+                                <td className="p-3">
+                                    {approvedApplications?.some(app => {
+                                        const isMatch = app?.user_id === application?.user_id && Boolean(app?.status);
+                                        console.log("AppUserID:", app?.user_id, "RowUserID:", application?.user_id, "Status:", app?.status, "isMatch:", isMatch);
+                                        return isMatch;
+                                    }) ? (
                                         <div>
                                             <button
                                                 onClick={() => downloadApplicationTwoPdf(application?.user_id)}
@@ -140,19 +157,23 @@ function ListApplication() {
                                             >
                                                 <FaDownload/>
                                             </button>
+                                            <button
+                                                disabled
+                                                className="p-2 bg-gray-400 text-white rounded cursor-not-allowed ml-2"
+                                            >
+                                                Tasdiqlangan
+                                            </button>
                                         </div>
-
                                     ) : (
                                         <button
                                             onClick={() => handleOpenModal(application?.user_id)}
-
-                                            className="p-2 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                            className="p-2 bg-green-600 text-white rounded hover:bg-green-700"
                                         >
                                             Tasdiqlash
                                         </button>
                                     )}
-
                                 </td>
+
                             </tr>
                         ))}
                         </tbody>
