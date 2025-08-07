@@ -122,40 +122,36 @@ function ListApplication() {
                         </tr>
                         </thead>
                         <tbody>
-                        {applications?.map((application, index) => (
-                            <tr className="border-t" key={application?.id}>
+                        {applications?.data?.map((application, index) => (
+                            <tr className="border-t" key={application?.user_id}>
                                 <td className="p-3">{offset + index + 1}</td>
                                 <td className="p-3">{application?.user_id}</td>
                                 <td className="p-3">
-                                    {application?.last_name + " " + application?.first_name + " " + application?.third_name}
+                                    {application?.passport_data?.last_name + " " + application?.passport_data?.first_name + " " + application?.passport_data?.third_name}
                                 </td>
                                 <td className="p-3">
-                                    {application?.user?.study_info?.study_direction?.name}
+                                    {application?.study_direction?.name}
                                 </td>
                                 <td className="p-3">
-                                    {application?.user?.study_info?.study_form?.name}
+                                    {application?.study_form?.name}
                                 </td>
                                 <td className="p-3">
-                                    {application?.user?.phone_number}
+                                    {application?.phone_number}
                                 </td>
                                 <td className="p-3">
-                                    {approvedApplications?.some(app => {
-                                        const isMatch = app?.user_id === application?.user_id && Boolean(app?.status);
-                                        console.log("AppUserID:", app?.user_id, "RowUserID:", application?.user_id, "Status:", app?.status, "isMatch:", isMatch);
-                                        return isMatch;
-                                    }) ? (
+                                    {Boolean(application?.is_approved) ? (
                                         <div>
                                             <button
                                                 onClick={() => downloadApplicationTwoPdf(application?.user_id)}
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded mr-2"
                                             >
-                                                <FaDownload/>
+                                                <FaDownload />
                                             </button>
                                             <button
                                                 onClick={() => downloadApplicationThreePdf(application?.user_id)}
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
                                             >
-                                                <FaDownload/>
+                                                <FaDownload />
                                             </button>
                                             <button
                                                 disabled
@@ -173,6 +169,7 @@ function ListApplication() {
                                         </button>
                                     )}
                                 </td>
+
 
                             </tr>
                         ))}

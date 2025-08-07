@@ -9,7 +9,7 @@ export const GetListUserApplicationApi = async ({limit = 10, offset = 0}) => {
         const params = new URLSearchParams();
         params.append("limit", limit);
         params.append("offset", offset);
-        const userapplication = await axiosInstance.get(`${API_URL}/api/user_data/get_user_data_by_passport_data_filter?${params.toString()}`,);
+        const userapplication = await axiosInstance.get(`${API_URL}/api/study_info/applications?${params.toString()}`,);
         return userapplication.data;
     } catch (error) {
         if (error.response?.status === 404) {
