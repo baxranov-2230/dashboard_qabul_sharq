@@ -36,10 +36,10 @@ function ListApplication() {
         queryFn: GetListApplicationCountApi,
     });
 
-    const {data: approvedApplications, refetch: refetchApprovedApplications} = useQuery({
-        queryKey: ["approved-application"],
-        queryFn: GetListApprovedApplicationApi,
-    });
+    // const {data: approvedApplications, refetch: refetchApprovedApplications} = useQuery({
+    //     queryKey: ["approved-application"],
+    //     queryFn: GetListApprovedApplicationApi,
+    // });
 
     const confirmMutation = useMutation({
         mutationKey: ["confirm-application"],
@@ -49,8 +49,8 @@ function ListApplication() {
             setOpen(false);
             setSelectedUserId(null);
             // formik.resetForm();
-            // refetch();
-            refetchApprovedApplications();
+            refetch();
+
         },
         onError: (error) => {
             console.log("Xatolik:", error.response?.data?.message); // 👈 asl xabar shu yerda bo'ladi
@@ -117,6 +117,7 @@ function ListApplication() {
                             <th className="p-3 text-gray-600">F.I.O</th>
                             <th className="p-3 text-gray-600">Ta'lim yo'nalishi</th>
                             <th className="p-3 text-gray-600">Ta'lim shakli</th>
+                            <th className="p-3 text-gray-600">Ta'lim turi</th>
                             <th className="p-3 text-gray-600">Telefon raqami</th>
                             <th className="p-3 text-gray-600">Amal</th>
                         </tr>
@@ -134,6 +135,9 @@ function ListApplication() {
                                 </td>
                                 <td className="p-3">
                                     {application?.study_form?.name}
+                                </td>
+                                <td className="p-3">
+                                    {application?.study_type?.name}
                                 </td>
                                 <td className="p-3">
                                     {application?.phone_number}
