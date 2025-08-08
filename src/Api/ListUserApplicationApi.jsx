@@ -4,12 +4,22 @@ import axiosInstancePost from './axiosinstance'
 const API_URL = import.meta.env.VITE_API_URL
 
 
-export const GetListUserApplicationApi = async ({limit = 10, offset = 0}) => {
+export const GetListUserApplicationApi = async ({ limit = 10, offset = 0, passport_series_number = "" }) => {
     try {
         const params = new URLSearchParams();
         params.append("limit", limit);
         params.append("offset", offset);
-        const userapplication = await axiosInstance.get(`${API_URL}/api/study_info/applications?${params.toString()}`,);
+
+        // if (first_name) {
+        //     params.append("first_name", first_name); // 👈 API hujjatidagi nom
+        // }
+        if (passport_series_number) {
+            params.append("passport_series_number", passport_series_number); // Bitta terim — F.I.O yoki pasport uchun
+        }
+
+        const userapplication = await axiosInstance.get(
+            `${API_URL}/api/study_info/applications?${params.toString()}`
+        );
         return userapplication.data;
     } catch (error) {
         if (error.response?.status === 404) {
@@ -18,6 +28,7 @@ export const GetListUserApplicationApi = async ({limit = 10, offset = 0}) => {
         throw error;
     }
 };
+
 
 
 export const ConfirmApplicationApi = async (confirmData) => {

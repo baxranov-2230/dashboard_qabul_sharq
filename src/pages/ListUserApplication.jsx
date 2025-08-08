@@ -18,7 +18,6 @@ import {
     downloadApplicationTwoPdf, GetListApplicationCountApi,
     GetListUserApplicationApi
 } from "../Api/ListUserApplicationApi.jsx";
-import {GetListApprovedApplicationApi} from "../Api/ListApprovedApplicationApi.jsx";
 
 
 function ListApplication() {
@@ -26,20 +25,24 @@ function ListApplication() {
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [limit, setLimit] = useState(10);
     const [offset, setOffset] = useState(0);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [inputValue, setInputValue] = useState("");
+
+
     const {data: applications, refetch} = useQuery({
-        queryKey: ["list-application", limit, offset],
-        queryFn: () => GetListUserApplicationApi({limit, offset}),
+        queryKey: ["list-application", limit, offset, searchTerm],
+        queryFn: () => GetListUserApplicationApi(
+            {
+                limit,
+                offset,
+                passport_series_number: searchTerm.toUpperCase(),
+            }),
     });
 
     const {data: countApplications} = useQuery({
         queryKey: ["count-application"],
         queryFn: GetListApplicationCountApi,
     });
-
-    // const {data: approvedApplications, refetch: refetchApprovedApplications} = useQuery({
-    //     queryKey: ["approved-application"],
-    //     queryFn: GetListApprovedApplicationApi,
-    // });
 
     const confirmMutation = useMutation({
         mutationKey: ["confirm-application"],
@@ -83,7 +86,6 @@ function ListApplication() {
     });
 
 
-
     const handleOpenModal = (userId) => {
         setSelectedUserId(userId);
         formik.setFieldValue("user_id", userId); // avtomatik user_id kiritish
@@ -102,13 +104,29 @@ function ListApplication() {
     const prevPage = () => {
         if (offset > 0) setOffset(prev => Math.max(prev - limit, 0));
     };
-
-
     return (
         <div className="space-y-6">
             <div className="bg-white rounded-lg shadow">
                 <div className="p-4">
                     <h2 className="text-2xl font-bold text-gray-800 mb-4">Yuborilgan arizalar</h2>
+                    <div className="mb-4 flex">
+                        <input
+                            type="text"
+                            placeholder="Pasport seriya orqali qidirish..."
+                            className="border px-3 py-2 rounded w-1/2 mr-2"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                        />
+                        <button
+                            onClick={() => {
+                                setSearchTerm(inputValue);
+                                setOffset(0); // Qidirishda birinchi sahifaga qaytish
+                            }}
+                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                        >
+                            Qidirish
+                        </button>
+                    </div>
                     <table className="w-full">
                         <thead>
                         <tr className="text-left bg-gray-50">
@@ -124,7 +142,7 @@ function ListApplication() {
                         </thead>
                         <tbody>
                         {applications?.data?.map((application, index) => (
-                            <tr className="border-t" key={application?.user_id}>
+                            <tr className="border-t" key={application?.id}>
                                 <td className="p-3">{offset + index + 1}</td>
                                 <td className="p-3">{application?.user_id}</td>
                                 <td className="p-3">
@@ -149,13 +167,13 @@ function ListApplication() {
                                                 onClick={() => downloadApplicationTwoPdf(application?.user_id)}
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded mr-2"
                                             >
-                                                <FaDownload />
+                                                <FaDownload/>
                                             </button>
                                             <button
                                                 onClick={() => downloadApplicationThreePdf(application?.user_id)}
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
                                             >
-                                                <FaDownload />
+                                                <FaDownload/>
                                             </button>
                                             <button
                                                 disabled
