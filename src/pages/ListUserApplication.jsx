@@ -15,7 +15,7 @@ import {
 
 import {
     ConfirmApplicationApi, downloadApplicationThreePdf,
-    downloadApplicationTwoPdf, GetListApplicationCountApi,
+    downloadApplicationTwoPdf, downloadStudyInfoExcel, GetListApplicationCountApi,
     GetListUserApplicationApi
 } from "../Api/ListUserApplicationApi.jsx";
 
@@ -126,6 +126,9 @@ function ListApplication() {
                         >
                             Qidirish
                         </button>
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded ml-10" onClick={() => downloadStudyInfoExcel()}>
+                            Excelni yuklab olish
+                        </button>
                     </div>
                     <table className="w-full">
                         <thead>
@@ -137,6 +140,7 @@ function ListApplication() {
                             <th className="p-3 text-gray-600">Ta'lim shakli</th>
                             <th className="p-3 text-gray-600">Ta'lim turi</th>
                             <th className="p-3 text-gray-600">Telefon raqami</th>
+                            <th className="p-3 text-gray-600">Topshirgan vaqti</th>
                             <th className="p-3 text-gray-600">Amal</th>
                         </tr>
                         </thead>
@@ -161,6 +165,9 @@ function ListApplication() {
                                     {application?.phone_number}
                                 </td>
                                 <td className="p-3">
+                                    {application?.create_at}
+                                </td>
+                                <td className="p-3">
                                     {Boolean(application?.is_approved) ? (
                                         <div>
                                             <button
@@ -175,12 +182,12 @@ function ListApplication() {
                                             >
                                                 <FaDownload/>
                                             </button>
-                                            <button
-                                                disabled
-                                                className="p-2 bg-gray-400 text-white rounded cursor-not-allowed ml-2"
-                                            >
-                                                Tasdiqlangan
-                                            </button>
+                                            {/*<button*/}
+                                            {/*    disabled*/}
+                                            {/*    className="p-2 bg-gray-400 text-white rounded cursor-not-allowed ml-2"*/}
+                                            {/*>*/}
+                                            {/*    Tasdiqlangan*/}
+                                            {/*</button>*/}
                                         </div>
                                     ) : (
                                         <button

@@ -101,6 +101,54 @@ export const downloadApplicationThreePdf = async (userId) => {
     }
 };
 
+import axios from "axios";
+
+export const downloadStudyInfoExcel = async () => {
+    try {
+        const response = await axiosInstance.get(
+            `${API_URL}/api/study_info/study-info/excel`,
+            {
+                responseType: "blob", // Excel fayli uchun blob muhim
+            }
+        );
+
+        // Serverning javobidan fayl nomini olishga harakat qilamiz
+        const dispo = response.headers["content-disposition"];
+        let fileName = "study-info.xlsx"; // default nom
+
+        if (dispo) {
+            const match = dispo.match(
+                /filename\*?=(?:UTF-8'')?["']?([^"';]+)["']?/i
+            );
+            if (match && match[1]) {
+                fileName = decodeURIComponent(match[1]);
+            }
+        }
+
+        // Blob ob'ektidan URL hosil qilamiz
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+
+        // Yuklab olish uchun <a> tegini yaratamiz
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        // Resursni tozalaymiz
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error("Excel yuklab olishda xatolik:", error);
+        alert(
+            error.response?.status === 401
+                ? "Avtorizatsiya xatosi. Iltimos, tizimga kiring."
+                : "Excel faylni yuklab olishda xatolik yuz berdi."
+        );
+    }
+};
+
+
 export const GetListApplicationCountApi = async () => {
     try {
         const response = await axiosInstance.get(`${API_URL}/api/user_data/users_with_study_info`,);
